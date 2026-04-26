@@ -368,10 +368,10 @@
   </div>
 </div>
 
-<script src="/user/gh-pages-api.js"></script>
+<script src="/user/gh-pages-api.js?v=6"></script>
 <script>
 if (!window.__GH_PAGES_API_READY) {
-  document.write('<script src="/gh-pages-api.js"><\/script>');
+  document.write('<script src="/gh-pages-api.js?v=6"><\/script>');
 }
 </script>
 <script>
@@ -1551,15 +1551,9 @@ function finalizeRecording() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/user/sw.js').then(function(reg) {
-      console.log('SW registered');
-    }).catch(function(err) {
-      navigator.serviceWorker.register('/sw.js').then(function() {
-        console.log('SW registered (fallback)');
-      }).catch(function() {
-        console.log('SW registration failed');
-      });
-    });
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      return Promise.all(registrations.map(function(reg) { return reg.unregister(); }));
+    }).catch(function() {});
   });
 }
 
