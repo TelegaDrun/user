@@ -15,15 +15,15 @@ create table if not exists users (
 );
 
 create table if not exists friends (
-  user text not null,
-  friend text not null,
-  primary key (user, friend)
+  user_name text not null,
+  friend_name text not null,
+  primary key (user_name, friend_name)
 );
 
 create table if not exists friend_requests (
-  user text not null,
+  target_user text not null,
   from_user text not null,
-  primary key (user, from_user)
+  primary key (target_user, from_user)
 );
 
 create table if not exists messages (

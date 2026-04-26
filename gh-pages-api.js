@@ -77,9 +77,9 @@
   }
 
   async function getFriendsOf(username) {
-    var rows = await sb("/friends?or=(user.eq." + encodeURIComponent(username) + ",friend.eq." + encodeURIComponent(username) + ")&select=user,friend", "GET");
+    var rows = await sb("/friends?or=(user_name.eq." + encodeURIComponent(username) + ",friend_name.eq." + encodeURIComponent(username) + ")&select=user_name,friend_name", "GET");
     return (rows || []).map(function (r) {
-      return r.user === username ? r.friend : r.user;
+      return r.user_name === username ? r.friend_name : r.user_name;
     });
   }
 
@@ -142,7 +142,7 @@
 
     if (pathname === "/api/friend/requests") {
       var reqUser = String(params.get("user") || "").toLowerCase();
-      var reqRows = await sb("/friend_requests?user=eq." + encodeURIComponent(reqUser) + "&select=from_user", "GET");
+      var reqRows = await sb("/friend_requests?target_user=eq." + encodeURIComponent(reqUser) + "&select=from_user", "GET");
       return asJsonResponse({ requests: (reqRows || []).map(function (r) { return r.from_user; }) });
     }
 
@@ -325,7 +325,7 @@
       var from = String(body.from || "").toLowerCase();
       var to = String(body.to || "").toLowerCase();
       if (!from || !to) return asJsonResponse({ ok: false, error: "Missing user" }, 400);
-      await sb("/friend_requests", "POST", [{ user: to, from_user: from }], { Prefer: "resolution=ignore-duplicates" });
+      await sb("/friend_requests", "POST", [{ target_user: to, from_user: from }], { Prefer: "resolution=ignore-duplicates" });
       return asJsonResponse({ ok: true });
     }
 
@@ -334,15 +334,15 @@
       var fromAccept = String(body.from || "").toLowerCase();
       var pairA = userAccept < fromAccept ? userAccept : fromAccept;
       var pairB = userAccept < fromAccept ? fromAccept : userAccept;
-      await sb("/friends", "POST", [{ user: pairA, friend: pairB }], { Prefer: "resolution=ignore-duplicates" });
-      await sb("/friend_requests?user=eq." + encodeURIComponent(userAccept) + "&from_user=eq." + encodeURIComponent(fromAccept), "DELETE");
+      await sb("/friends", "POST", [{ user_name: pairA, friend_name: pairB }], { Prefer: "resolution=ignore-duplicates" });
+      await sb("/friend_requests?target_user=eq." + encodeURIComponent(userAccept) + "&from_user=eq." + encodeURIComponent(fromAccept), "DELETE");
       return asJsonResponse({ ok: true });
     }
 
     if (pathname === "/api/friend/decline") {
       var userDecline = String(body.user || "").toLowerCase();
       var fromDecline = String(body.from || "").toLowerCase();
-      await sb("/friend_requests?user=eq." + encodeURIComponent(userDecline) + "&from_user=eq." + encodeURIComponent(fromDecline), "DELETE");
+      await sb("/friend_requests?target_user=eq." + encodeURIComponent(userDecline) + "&from_user=eq." + encodeURIComponent(fromDecline), "DELETE");
       return asJsonResponse({ ok: true });
     }
 
@@ -351,7 +351,7 @@
       var friendRemove = String(body.friend || "").toLowerCase();
       var a = userRemove < friendRemove ? userRemove : friendRemove;
       var b = userRemove < friendRemove ? friendRemove : userRemove;
-      await sb("/friends?user=eq." + encodeURIComponent(a) + "&friend=eq." + encodeURIComponent(b), "DELETE");
+      await sb("/friends?user_name=eq." + encodeURIComponent(a) + "&friend_name=eq." + encodeURIComponent(b), "DELETE");
       return asJsonResponse({ ok: true });
     }
 
@@ -369,20 +369,20 @@
 
       await sb("/messages?sender=eq." + encodeURIComponent(oldNick), "PATCH", { sender: newNick });
       await sb("/group_messages?sender=eq." + encodeURIComponent(oldNick), "PATCH", { sender: newNick });
-      await sb("/friend_requests?user=eq." + encodeURIComponent(oldNick), "PATCH", { user: newNick });
+      await sb("/friend_requests?target_user=eq." + encodeURIComponent(oldNick), "PATCH", { target_user: newNick });
       await sb("/friend_requests?from_user=eq." + encodeURIComponent(oldNick), "PATCH", { from_user: newNick });
       await sb("/calls?call_to=eq." + encodeURIComponent(oldNick), "PATCH", { call_to: newNick });
       await sb("/calls?from_user=eq." + encodeURIComponent(oldNick), "PATCH", { from_user: newNick });
 
-      var friends = await sb("/friends?or=(user.eq." + encodeURIComponent(oldNick) + ",friend.eq." + encodeURIComponent(oldNick) + ")&select=user,friend", "GET");
+      var friends = await sb("/friends?or=(user_name.eq." + encodeURIComponent(oldNick) + ",friend_name.eq." + encodeURIComponent(oldNick) + ")&select=user_name,friend_name", "GET");
       for (var i = 0; i < (friends || []).length; i++) {
         var fr = friends[i];
-        var ua = fr.user === oldNick ? newNick : fr.user;
-        var ub = fr.friend === oldNick ? newNick : fr.friend;
+        var ua = fr.user_name === oldNick ? newNick : fr.user_name;
+        var ub = fr.friend_name === oldNick ? newNick : fr.friend_name;
         var pa = ua < ub ? ua : ub;
         var pb = ua < ub ? ub : ua;
-        await sb("/friends", "POST", [{ user: pa, friend: pb }], { Prefer: "resolution=ignore-duplicates" });
-        await sb("/friends?user=eq." + encodeURIComponent(fr.user) + "&friend=eq." + encodeURIComponent(fr.friend), "DELETE");
+        await sb("/friends", "POST", [{ user_name: pa, friend_name: pb }], { Prefer: "resolution=ignore-duplicates" });
+        await sb("/friends?user_name=eq." + encodeURIComponent(fr.user_name) + "&friend_name=eq." + encodeURIComponent(fr.friend_name), "DELETE");
       }
 
       var chats = await sb("/messages?chat_key=like.*" + encodeURIComponent(oldNick) + "*&select=id,chat_key", "GET");
