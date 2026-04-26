@@ -1,5 +1,6 @@
 /* Browser-only API emulation for GitHub Pages. */
 (function () {
+  window.__GH_PAGES_API_READY = true;
   var STORAGE_KEY = "telega_store_v1";
 
   function now() {

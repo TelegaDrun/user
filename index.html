@@ -331,7 +331,12 @@
   </div>
 </div>
 
-<script src="./gh-pages-api.js"></script>
+<script src="/user/gh-pages-api.js"></script>
+<script>
+if (!window.__GH_PAGES_API_READY) {
+  document.write('<script src="/gh-pages-api.js"><\/script>');
+}
+</script>
 <script>
 var username = '';
 var activeChat = null;
@@ -1486,10 +1491,14 @@ function finalizeRecording() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+    navigator.serviceWorker.register('/user/sw.js').then(function(reg) {
       console.log('SW registered');
     }).catch(function(err) {
-      console.log('SW registration failed');
+      navigator.serviceWorker.register('/sw.js').then(function() {
+        console.log('SW registered (fallback)');
+      }).catch(function() {
+        console.log('SW registration failed');
+      });
     });
   });
 }

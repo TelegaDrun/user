@@ -1,4 +1,4 @@
-const CACHE_NAME = 'telegadrun-v2';
+const CACHE_NAME = 'telegadrun-v3';
 const urlsToCache = ['./', './index.html', './manifest.json', './gh-pages-api.js'];
 
 self.addEventListener('install', event => {
@@ -9,8 +9,15 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
+    fetch(event.request)
+      .then(networkResponse => {
+        const copy = networkResponse.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {});
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 
