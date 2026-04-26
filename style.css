@@ -1,5 +1,0 @@
-:root { --bg: #f7f7f7; --fg: #333; }
-html, body { margin: 0; padding: 0; height: 100%; }
-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--fg); padding: 2rem; }
-header, footer { text-align: center; margin-bottom: 1rem; }
-main { max-width: 720px; margin: 0 auto; }
