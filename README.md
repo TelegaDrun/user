@@ -20,70 +20,14 @@
 
 ## Настройка Supabase
 
-Открой SQL Editor в Supabase и выполни:
+1. Открой SQL Editor в Supabase.
+2. Выполни скрипт из файла `supabase-init.sql`.
+3. Убедись, что запросы к таблицам проходят без ошибок.
 
-```sql
-create table if not exists users (
-  username text primary key,
-  password text not null,
-  online boolean default false,
-  created_at double precision,
-  display_name text,
-  avatar text,
-  theme text,
-  sound boolean default true,
-  vibrate boolean default true,
-  sound_type text,
-  custom_sound text
-);
-
-create table if not exists friends (
-  user text not null,
-  friend text not null,
-  primary key (user, friend)
-);
-
-create table if not exists friend_requests (
-  user text not null,
-  from_user text not null,
-  primary key (user, from_user)
-);
-
-create table if not exists messages (
-  id text primary key,
-  chat_key text not null,
-  sender text not null,
-  text text,
-  type text,
-  data text,
-  timestamp double precision,
-  deleted_for_sender boolean default false
-);
-
-create table if not exists groups (
-  name text primary key,
-  members jsonb default '[]'::jsonb,
-  created_at double precision,
-  avatar text
-);
-
-create table if not exists group_messages (
-  id text primary key,
-  group_name text not null,
-  sender text not null,
-  text text,
-  timestamp double precision
-);
-
-create table if not exists calls (
-  call_to text primary key,
-  from_user text not null,
-  type text,
-  time double precision
-);
-```
-
-Если включен RLS, добавь политики (или временно выключи RLS для этих таблиц), иначе клиент не сможет читать/писать.
+В `supabase-init.sql` уже есть:
+- создание всех таблиц;
+- нужные индексы;
+- отключение RLS для demo-режима (чтобы anon key сразу работал с GitHub Pages).
 
 ## Примечания
 
