@@ -1,0 +1,16 @@
+{
+  "name": "TelegaDrun",
+  "id": "com.telegadrun.app",
+  "web_dir": "..",
+  "server": {
+    "url": "http://localhost:8080"
+  },
+  "android": {
+    "app_id": "com.telegadrun.app",
+    "app_name": "TelegaDrun"
+  },
+  "ios": {
+    "app_id": "com.telegadrun.app",
+    "app_name": "TelegaDrun"
+  }
+}

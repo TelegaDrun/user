@@ -1,0 +1,4 @@
+Name=TelegaServer
+AppID=TelegaServer
+ScriptPath=D:\telega-clone\auto_start.py
+AutoStarting=Enabled

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>TelegaDrun</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: white; display: flex; flex-direction: column; }
+    .app-bar { background: #161625; padding: 12px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2a2a4a; }
+    .app-bar h1 { font-size: 18px; flex: 1; }
+    .app-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 8px; }
+    .webview { flex: 1; }
+    iframe { width: 100%; height: 100%; border: none; }
+    .status-bar { background: #161625; padding: 8px 16px; font-size: 12px; color: #888; border-top: 1px solid #2a2a4a; }
+  </style>
+</head>
+<body>
+  <div class="app-bar">
+    <button class="app-btn" onclick="goBack()">←</button>
+    <h1>TelegaDrun</h1>
+    <button class="app-btn" onclick="goForward()">→</button>
+    <button class="app-btn" onclick="goRefresh()">↻</button>
+  </div>
+  <div class="webview">
+    <iframe id="webview" src="http://localhost:8080"></iframe>
+  </div>
+  <div class="status-bar" id="status">Подключение...</div>
+
+  <script>
+    const webview = document.getElementById('webview');
+    const status = document.getElementById('status');
+
+    function goBack() { webview.contentWindow.history.back(); }
+    function goForward() { webview.contentWindow.history.forward(); }
+    function goRefresh() { webview.src = webview.src; }
+
+    webview.onload = () => { status.textContent = 'Подключено'; };
+    webview.onerror = () => { status.textContent = 'Ошибка загрузки'; };
+
+    // Check server
+    fetch('http://localhost:8080/').then(() => { status.textContent = 'Подключено'; }).catch(() => {
+      status.textContent = 'Сервер не запущен - запустите server.py';
+    });
+  </script>
+</body>
+</html>
