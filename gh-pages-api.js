@@ -2,6 +2,7 @@
 (function () {
   window.__GH_PAGES_API_READY = true;
   var STORAGE_KEY = "telega_store_v1";
+  var STORAGE_BACKUP_KEY = "telega_store_v1_backup";
 
   function now() {
     return Date.now() / 1000;
@@ -17,7 +18,24 @@
 
   function loadStore() {
     var raw = localStorage.getItem(STORAGE_KEY);
+    var backupRaw = localStorage.getItem(STORAGE_BACKUP_KEY);
     if (!raw) {
+      var backupParsed = safeJsonParse(backupRaw, null);
+      if (backupParsed && typeof backupParsed === "object") {
+        return Object.assign(
+          {
+            users: {},
+            passwords: {},
+            friends: {},
+            friend_requests: {},
+            messages: {},
+            groups: {},
+            group_messages: {},
+            calls: {}
+          },
+          backupParsed
+        );
+      }
       return {
         users: {},
         passwords: {},
@@ -31,6 +49,22 @@
     }
     var parsed = safeJsonParse(raw, null);
     if (!parsed || typeof parsed !== "object") {
+      var backupParsed2 = safeJsonParse(backupRaw, null);
+      if (backupParsed2 && typeof backupParsed2 === "object") {
+        return Object.assign(
+          {
+            users: {},
+            passwords: {},
+            friends: {},
+            friend_requests: {},
+            messages: {},
+            groups: {},
+            group_messages: {},
+            calls: {}
+          },
+          backupParsed2
+        );
+      }
       return {
         users: {},
         passwords: {},
@@ -58,7 +92,9 @@
   }
 
   function saveStore(store) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    var serialized = JSON.stringify(store);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem(STORAGE_BACKUP_KEY, serialized);
   }
 
   function uuid() {
@@ -215,7 +251,7 @@
       if (!username || !password) {
         return asJsonResponse({ ok: false, error: "Missing username or password" }, 400);
       }
-      if (store.passwords[username]) {
+      if (store.passwords[username] || store.users[username]) {
         return asJsonResponse({ ok: false, error: "Username already exists" }, 400);
       }
       store.passwords[username] = password;

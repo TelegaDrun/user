@@ -925,6 +925,8 @@ function doLogin() {
     } else {
       alert(data.error || 'Ошибка');
     }
+  }).catch(() => {
+    alert('Ошибка входа. Обнови страницу и попробуй еще раз.');
   });
 }
 
@@ -950,6 +952,8 @@ function doRegister() {
     } else {
       alert(data.error || 'Ошибка');
     }
+  }).catch(() => {
+    alert('Ошибка регистрации. Обнови страницу и попробуй еще раз.');
   });
 }
 
