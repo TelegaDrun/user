@@ -1,5 +1,5 @@
-const CACHE_NAME = 'telegadrun-v1';
-const urlsToCache = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = 'telegadrun-v2';
+const urlsToCache = ['./', './index.html', './manifest.json', './gh-pages-api.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
